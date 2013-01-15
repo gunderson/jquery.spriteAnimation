@@ -3,7 +3,7 @@ module.exports = function(grunt) {
 
   // Project configuration.
   grunt.initConfig({
-    pkg: '<json:jQuery.spriteAnimation.jquery.json>',
+    pkg: '<json:jquery.spriteAnimation.jquery.json>',
     meta: {
       banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
         '<%= grunt.template.today("yyyy-mm-dd") %>\n' +

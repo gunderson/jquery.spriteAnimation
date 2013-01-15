@@ -1,5 +1,5 @@
 {
-  "name": "jQuery.spriteAnimation",
+  "name": "jquery.spriteAnimation",
   "title": "jQuery.SpriteAnimation",
   "description": "Makes a div element and animates through a sequence of frames in a single image.",
   "version": "0.1.0",

@@ -1,6 +1,6 @@
 # jQuery.SpriteAnimation
 
-Makes a div element and animates through a sequence of frames in a single image.
+Appends a new div element to object and animates through a sequence of frames in a single image.
 
 ## Getting Started
 Download the [production version][min] or the [development version][max].
