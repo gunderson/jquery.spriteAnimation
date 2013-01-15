@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>jQuery.SpriteAnimation Test Suite</title>
+  <script src="../libs/jquery/jquery.js"></script>
+  <!-- Load local lib. -->
+  <script src="../src/jQuery.spriteAnimation.js"></script>
+  <style>
+    .testButton{
+      width: 24px;
+      height: 24px;
+      background-color: #333;
+      border: 1px solid #000;
+    }
+  </style>
+</head>
+<body>
+  <h1>Roll over arrow</h1>
+  <div class="testButton"></div>
+</body>
+<script>
+  $(".testButton").spriteAnimation({
+    src: "arrowSequence.png",
+    frameWidth: 24,
+    frameHeight: 24,
+    frameSpacing: 1,
+    frameRate: 60,
+    numFrames: 11
+  }).mouseenter(function(){
+    $(this).spriteAnimation('play');
+  }).mouseleave(function(){
+    $(this).spriteAnimation('rewind');
+  })
+</script>
+</html>
