@@ -104,6 +104,8 @@
                     base.currentFrame = 0;
                     base.$el.trigger('loop');
                     return gotoFrame(base.currentFrame);
+                } else {
+                    return base.stop();
                 }
             }
         };
@@ -115,7 +117,9 @@
                 if (base.options.loop){
                     base.currentFrame = base.options.numFrames;
                     base.$el.trigger('loop');
-                    return gotoFrame(base.currentFrame);
+                    return base.gotoFrame(base.currentFrame);
+                } else {
+                    return base.stop();
                 }
             }
         };
@@ -184,6 +188,9 @@
                 $.extend(anim.options, settings);
                 if (settings.frameRate){
                     anim.setFrameRate(settings.frameRate);
+                }
+                if (settings.firstFramePosition){
+                    anim.gotoFrame(0);
                 }
                 if (settings.frame) {
                     anim.gotoFrame(settings.frame);

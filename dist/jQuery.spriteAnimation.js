@@ -1,4 +1,4 @@
-/*! jQuery.SpriteAnimation - v0.1.0 - 2013-01-15
+/*! jQuery.SpriteAnimation - v0.1.0 - 2013-01-16
 * https://github.com/patrickgunderson/jQuery.spriteAnimation
 * Copyright (c) 2013 Patrick Gunderson; Licensed MIT */
 
@@ -100,6 +100,8 @@
                     base.currentFrame = 0;
                     base.$el.trigger('loop');
                     return gotoFrame(base.currentFrame);
+                } else {
+                    return base.stop();
                 }
             }
         };
@@ -111,7 +113,9 @@
                 if (base.options.loop){
                     base.currentFrame = base.options.numFrames;
                     base.$el.trigger('loop');
-                    return gotoFrame(base.currentFrame);
+                    return base.gotoFrame(base.currentFrame);
+                } else {
+                    return base.stop();
                 }
             }
         };
@@ -180,6 +184,9 @@
                 $.extend(anim.options, settings);
                 if (settings.frameRate){
                     anim.setFrameRate(settings.frameRate);
+                }
+                if (settings.firstFramePosition){
+                    anim.gotoFrame(0);
                 }
                 if (settings.frame) {
                     anim.gotoFrame(settings.frame);
