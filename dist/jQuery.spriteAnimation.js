@@ -1,4 +1,4 @@
-/*! jQuery.SpriteAnimation - v0.1.0 - 2013-01-16
+/*! jQuery.SpriteAnimation - v0.1.0 - 2013-05-31
 * https://github.com/patrickgunderson/jQuery.spriteAnimation
 * Copyright (c) 2013 Patrick Gunderson; Licensed MIT */
 
@@ -7,17 +7,17 @@
         // To avoid scope issues, use 'base' instead of 'this'
         // to reference this class from internal events and functions.
         var base = this;
-        
+
         // Access to jQuery and DOM versions of element
         base.$el = $(el);
         base.el = el;
         base.currentFrame = 0;
         base.running = false;
         base.timeout = null;
-        
+
         // Add a reverse reference to the DOM object
         base.$el.data("spriteAnimation", base);
-        
+
         base.init = function(){
             base.el = el;
             base.options = $.extend({},$.spriteAnimation.options, options);
@@ -78,7 +78,7 @@
             }
             var newY = -base.options.firstFramePosition.y;
             if (base.options.orientation === "y" ) {
-                newY = (-frameNumber * (base.options.frameWidth + base.options.frameSpacing)) - base.options.firstFramePosition.y;
+                newY = (-frameNumber * (base.options.frameHeight + base.options.frameSpacing)) - base.options.firstFramePosition.y;
             }
 
             base.$anim.css({
@@ -101,6 +101,7 @@
                     base.$el.trigger('loop');
                     return gotoFrame(base.currentFrame);
                 } else {
+                    base.complete();
                     return base.stop();
                 }
             }
@@ -115,6 +116,7 @@
                     base.$el.trigger('loop');
                     return base.gotoFrame(base.currentFrame);
                 } else {
+                    base.complete();
                     return base.stop();
                 }
             }
@@ -166,11 +168,12 @@
     // Collection method.
     $.fn.spriteAnimation = function(settings) {
         return this.each(function() {
+            var $this = $(this);
             var options, carousel;
             if(!(anim = this.spriteAnimation)) {
                 if (!settings.src) {
-                    if (!(settings.src = this.css('backgroundImage')) ||
-                        !(settings.src = this.attr('src'))) {
+                    if (!(settings.src = $this.css('backgroundImage')) ||
+                        !(settings.src = $this.attr('src'))) {
                         var error = (console) ? console.error("SpriteAnimation requires image src.") : false;
                         return this;
                     }
@@ -190,6 +193,9 @@
                 }
                 if (settings.frame) {
                     anim.gotoFrame(settings.frame);
+                }
+                if (settings.frameRatio) {
+                    anim.gotoFrame((settings.frameRatio * anim.options.numFrames) >> 0);
                 }
             } else if(settings && typeof settings === "string") {
                 if(settings === "play") {
