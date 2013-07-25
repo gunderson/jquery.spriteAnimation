@@ -5,14 +5,14 @@ Appends a new div element to object and animates through a sequence of frames in
 ## Getting Started
 Download the [production version][min] or the [development version][max].
 
-[min]: https://raw.github.com/patrickgunderson/jQuery.spriteAnimation/master/dist/jQuery.spriteAnimation.min.js
-[max]: https://raw.github.com/patrickgunderson/jQuery.spriteAnimation/master/dist/jQuery.spriteAnimation.js
+[min]: https://raw.github.com/patrickgunderson/jquery.spriteAnimation/master/dist/jquery.spriteAnimation.min.js
+[max]: https://raw.github.com/patrickgunderson/jquery.spriteAnimation/master/dist/jquery.spriteAnimation.js
 
 In your web page:
 
 ```html
 <script src="jquery.js"></script>
-<script src="dist/jQuery.spriteAnimation.min.js"></script>
+<script src="dist/jquery.spriteAnimation.min.js"></script>
 <script>
 $(".testButton").spriteAnimation({
     src: "filmstrip.png",
