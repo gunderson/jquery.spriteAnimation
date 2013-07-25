@@ -5,8 +5,8 @@ Appends a new div element to object and animates through a sequence of frames in
 ## Getting Started
 Download the [production version][min] or the [development version][max].
 
-[min]: https://raw.github.com/patrickgunderson/jquery.spriteAnimation/master/dist/jquery.spriteAnimation.min.js
-[max]: https://raw.github.com/patrickgunderson/jquery.spriteAnimation/master/dist/jquery.spriteAnimation.js
+[min]: https://raw.github.com/gunderson/jquery.spriteAnimation/master/dist/jquery.spriteAnimation.min.js
+[max]: https://raw.github.com/gunderson/jquery.spriteAnimation/master/dist/jquery.spriteAnimation.js
 
 In your web page:
 
