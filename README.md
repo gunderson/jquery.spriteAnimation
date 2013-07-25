@@ -1,4 +1,4 @@
-# jQuery.SpriteAnimation
+# jquery.spriteAnimation
 
 Appends a new div element to object and animates through a sequence of frames in a single image.
 
