@@ -55,9 +55,9 @@ Stops the animation sequence and frame to 0.
 
 ### Options
 
-#### src - Required
+#### src
 
-Image source url.
+Image source url. If not provided, the script tries to use the element's `background-image` or the `<img src>`.
 
     { src: "filmstrip.png" }
 
