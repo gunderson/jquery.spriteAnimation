@@ -2,7 +2,7 @@
 
   "name": "jquery.spriteAnimation",
   "description": "A jQuery plugin that takes a filmstrip image and animates through the frames.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "engines": {
     "node": ">= 0.8.0"
   },
