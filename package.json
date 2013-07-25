@@ -1,6 +1,7 @@
 {
 
   "name": "jquery.spriteAnimation",
+  "description": "A jQuery plugin that takes a filmstrip image and animates through the frames.",
   "version": "0.1.0",
   "engines": {
     "node": ">= 0.8.0"
@@ -39,7 +40,7 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://www.opensource.org/licenses/mit-license.php",
+      "url": "http://www.opensource.org/licenses/mit-license.php"
     }
   ],
   "repositories": [
