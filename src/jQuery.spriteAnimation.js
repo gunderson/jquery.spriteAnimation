@@ -176,7 +176,7 @@
             var options, carousel;
             if(!(anim = this.spriteAnimation)) {
                 if (!settings.src) {
-                    if (!(settings.src = $this.css('backgroundImage')) ||
+                    if (!(settings.src = $this.css('background-image')) ||
                         !(settings.src = $this.attr('src'))) {
                         var error = (console) ? console.error("SpriteAnimation requires image src.") : false;
                         return this;
