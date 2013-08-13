@@ -1,4 +1,4 @@
-/*! jquery.spriteAnimation - v0.1.1 - 2013-07-25
+/*! jquery.spriteAnimation - v0.2.0 - 2013-08-13
 * https://github.com/gunderson/jquery.spriteAnimation
 * Copyright (c) 2013 Patrick Gunderson; Licensed MIT */
 (function($) {
@@ -10,7 +10,7 @@
         // Access to jQuery and DOM versions of element
         base.$el = $(el);
         base.el = el;
-        base.currentFrame = 0;
+        base.currentFrameIndex = 0;
         base.running = false;
         base.timeout = null;
 
@@ -21,17 +21,18 @@
             base.el = el;
             base.options = $.extend({},$.spriteAnimation.options, options);
             base.$el = $(this.el);
-            base.generate();
             base.setFrameRate(base.options.frameRate);
         };
 
         base.generate = function(){
             base.$anim = $("<div/>").addClass('spriteAnimation');
+            var width = base.options.frameWidth || base.$el.width(),
+                height = base.options.frameHeight || base.$el.height();
             base.$anim.css({
               backgroundImage: 'url(' + base.options.src + ')',
-              backgroundPosition: base.options.firstFramePosition.x + "px " + base.options.firstFramePosition.y + "px",
-              width: (base.options.frameWidth) + "px",
-              height: (Math.abs(base.options.frameHeight)) + "px",
+              backgroundPosition: base.options.currentSequence.firstFramePosition.x + "px " + base.options.currentSequence.firstFramePosition.y + "px",
+              width: width,
+              height: height,
               overflow: "hidden"
           });
             base.$el.append(base.$anim);
@@ -45,45 +46,46 @@
 
         base.play = function(){
             base.running = true;
-            base.options.reverse = false;
+            base.options.currentSequence.reverse = false;
             base.delayNextFrame();
             return base;
         };
 
         base.rewind = function(){
             base.running = true;
-            base.options.reverse = true;
+            base.options.currentSequence.reverse = true;
             base.delayPrevFrame();
             return base;
         };
 
         base.stop = function(){
-            if (base.timeout) clearTimeout(base.timeout);
+            if (base.timeout) {clearTimeout(base.timeout);}
             base.running = false;
             return base;
         };
 
         base.reset = function(){
             base.stop();
-            base.currentFrame = 0;
+            base.currentFrameIndex = 0;
             base.gotoFrame(0);
             return base;
         };
 
         base.gotoFrame = function(frameNumber){
-            var newX = -base.options.firstFramePosition.x;
+
+            var newX = -base.options.currentSequence.firstFramePosition.x;
             if (base.options.orientation === "x" ) {
-                newX = (-frameNumber * (base.options.frameWidth + base.options.frameSpacing)) - base.options.firstFramePosition.x;
+                newX = (-frameNumber * (base.options.frameWidth + base.options.frameSpacing)) - base.options.currentSequence.firstFramePosition.x;
             }
-            var newY = -base.options.firstFramePosition.y;
+            var newY = -base.options.currentSequence.firstFramePosition.y;
             if (base.options.orientation === "y" ) {
-                newY = (-frameNumber * (base.options.frameHeight + base.options.frameSpacing)) - base.options.firstFramePosition.y;
+                newY = (-frameNumber * (base.options.frameHeight + base.options.frameSpacing)) - base.options.currentSequence.firstFramePosition.y;
             }
 
             base.$anim.css({
                 backgroundPosition: newX + "px " + newY + "px"
             });
-            if (base.options.reverse){
+            if (base.options.currentSequence.reverse){
                 base.delayPrevFrame();
             } else {
                 base.delayNextFrame();
@@ -92,13 +94,14 @@
         };
 
         base.nextFrame = function(){
-            if (++base.currentFrame < base.options.numFrames){
-                return base.gotoFrame(base.currentFrame);
+            if (++base.currentFrameIndex < base.options.currentSequence.duration){
+                return base.gotoFrame(base.currentFrameIndex);
             } else {
-                if (base.options.loop){
-                    base.currentFrame = 0;
-                    base.$el.trigger('loop');
-                    return gotoFrame(base.currentFrame);
+                if (base.options.currentSequence.loop){
+                    base.currentFrameIndex = 0;
+                    base.$el.trigger('spriteAnimation:loop');
+                    base.$el.trigger('spriteAnimation:loop-to-start');
+                    return base.gotoFrame(base.currentFrameIndex);
                 } else {
                     base.complete();
                     return base.stop();
@@ -107,13 +110,14 @@
         };
 
         base.prevFrame = function(){
-            if (--base.currentFrame >= 0){
-                return base.gotoFrame(base.currentFrame);
+            if (--base.currentFrameIndex >= 0){
+                return base.gotoFrame(base.currentFrameIndex);
             } else {
-                if (base.options.loop){
-                    base.currentFrame = base.options.numFrames;
-                    base.$el.trigger('loop');
-                    return base.gotoFrame(base.currentFrame);
+                if (base.options.currentSequence.loop){
+                    base.currentFrameIndex = base.options.currentSequence.duration;
+                    base.$el.trigger('spriteAnimation:loop');
+                    base.$el.trigger('spriteAnimation:loop-to-end');
+                    return base.gotoFrame(base.currentFrameIndex);
                 } else {
                     base.complete();
                     return base.stop();
@@ -138,11 +142,16 @@
             }
         };
 
+        base.addSequence = function(sequenceObject){
+            base.options.sequences[sequenceObject.label] = $.extend({}, base.options.defaultSequence, sequenceObject);
+        };
+
         base.complete = function(){
-            if (typeof(base.options.onComplete) === "function"){
-                base.options.onComplete();
+            if (typeof(base.options.currentSequence.onComplete) === "function"){
+                base.options.currentSequence.onComplete();
             }
-            base.$el.trigger('complete');
+            base.$el.trigger('spriteAnimation:complete');
+            base.$el.trigger('spriteAnimation:complete:' + base.options.currentSequence.label);
         };
 
         // Run initializer
@@ -152,50 +161,103 @@
 
     $.spriteAnimation.options =  {
         src: "",
-        firstFramePosition: {x:0, y:0},
+        sequences: {},
+        defaultSequence: {
+            label: "a",
+            first:0,
+            duration:25,
+            loop:false,
+            firstFramePosition: {x:0, y:0},
+            reverse: false,
+            onComplete: null
+        },
         orientation: "x",
         frameWidth: 25,
         frameHeight: 25,
         frameSpacing: 0,
         frameRate: 25, // fps,
-        numFrames: 10,
-        loop: false,
-        reverse: false,
-        onComplete: null
+        gotoAndPlay: "a"
     };
 
     // Collection method.
     $.fn.spriteAnimation = function(settings) {
         return this.each(function() {
             var $this = $(this);
-            var options, carousel;
+            var options, 
+                anim;
+                settings = settings || {};
             if(!(anim = this.spriteAnimation)) {
                 if (!settings.src) {
-                    if (!(settings.src = $this.css('backgroundImage')) ||
+                    if (!(settings.src = $this.css('backgroundImage')) &&
                         !(settings.src = $this.attr('src'))) {
                         var error = (console) ? console.error("SpriteAnimation requires image src.") : false;
                         return this;
+                    } else {
+                        $this.css('backgroundImage', 'none');
+                        $this.attr('src', "");
+                    }
+                    if (settings.src.substr(0,4) === "url("){
+                        settings.src = settings.src.replace('url(','').replace(')','');
                     }
                 }
 
-                options = $.extend({}, $.spriteAnimation.options, settings);
                 this.spriteAnimation = anim = new $.spriteAnimation(this, options);
+                if (!settings.addSequences && !settings.addSequence){
+                    // allow a single sequence to be set simply by directly adding options.
+                    options = $.extend({}, $.spriteAnimation.options);
+                    settings.label = settings.label || "a"; // "a" is the default sequence names
+                    settings.addSequence = $.extend({}, settings, {addSequence:null});
+                    settings.setSequence = settings.label;
+                } else {
+                    options = $.extend({}, $.spriteAnimation.options, settings);
+                }
             }
             if(settings && typeof settings === "object") {
                 $.extend(anim.options, settings);
+                if (settings.addSequences){
+                    $.each(settings.addSequences, function(i, obj){
+                        this.label = i;
+                        anim.addSequence(this);
+                    });
+                }
+                if (settings.addSequence){
+                    anim.addSequence(settings.addSequence);
+                }
+                if (settings.gotoAndPlay){
+                    settings.setSequence = settings.gotoAndPlay;
+                    settings.command = 'play';
+                }
+                if (settings.setSequence){
+                    anim.options.currentSequence = anim.options.sequences[settings.setSequence];
+                    settings.gotoFrame = settings.gotoFrame || 0;
+                }
+
+                if (!anim.$anim){
+                    anim.generate();
+                }
                 if (settings.frameRate){
                     anim.setFrameRate(settings.frameRate);
                 }
-                if (settings.firstFramePosition){
-                    anim.gotoFrame(0);
-                }
-                if (settings.frame) {
-                    anim.gotoFrame(settings.frame);
+                if (settings.gotoFrame >= 0 || settings.gotoFrame) {
+                    if (settings.gotoFrame === 'end'){
+                        settings.gotoFrame = anim.options.currentSequence.duration - 1;
+                    }
+                    anim.stop();
+                    anim.currentFrameIndex = settings.gotoFrame;
+                    anim.gotoFrame(settings.gotoFrame);
                 }
                 if (settings.frameRatio) {
-                    anim.gotoFrame((settings.frameRatio * anim.options.numFrames) >> 0);
+                    anim.gotoFrame((settings.frameRatio * anim.options.currentSequence.duration) >> 0);
                 }
-            } else if(settings && typeof settings === "string") {
+                if (settings.command){
+                    settings = settings.command;
+                }
+            }
+            if(settings && typeof settings === "string") {
+                if (!anim.$anim){
+                    anim.generate();
+                }
+
                 if(settings === "play") {
                     anim.play();
                 }
@@ -213,6 +275,7 @@
             } else if (!settings){
                 anim.reset();
             }
+
             return this;
         });
     };

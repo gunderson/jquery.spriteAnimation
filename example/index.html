@@ -1,0 +1,47 @@
+<html><head>
+	<title>jquery.spriteAnimation Example</title>
+	<style>
+		#anim{
+			background: url(anim_x21_horiz.png);
+			width: 25px;
+			height: 25px;
+		}
+		body{
+			background: #000
+		}
+	</style>
+</head>
+<body>
+	<div id='anim'></div>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script src="../src/jquery.spriteAnimation.js"></script>
+	<script type="text/javascript">
+		$('#anim')
+			.spriteAnimation({
+					addSequences:{
+						a: {
+							duration: 21
+						},
+						b: {
+							duration: 21,
+							firstFramePosition: {x:0, y:25}
+						}
+					},
+					setSequence: "a"
+				}
+			)
+			.on('mouseenter', function(){
+				$('#anim')
+				.spriteAnimation({gotoAndPlay:"a"});
+			})
+			.on('mouseleave', function(){
+				$('#anim')
+				.spriteAnimation({setSequence:"b", gotoFrame:"end", command:'rewind'});
+			})
+			.on('spriteAnimation:complete:b', function(){
+				$('#anim')
+				.spriteAnimation({setSequence:"a"});
+			})
+	</script>
+</body>
+</html>
