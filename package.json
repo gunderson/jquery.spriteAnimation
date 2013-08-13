@@ -1,5 +1,4 @@
 {
-
   "name": "jquery.spriteAnimation",
   "description": "A jQuery plugin that takes a filmstrip image and animates through the frames.",
   "version": "0.2.0",
@@ -15,11 +14,6 @@
     "grunt-contrib-clean": "~0.4.0",
     "grunt": "~0.4.1"
   },
-  "jam": {
-    "dependencies": {
-      "jquery": ">=1.8"
-    }
-  },
   "homepage": "https://github.com/gunderson/jquery.spriteAnimation",
   "keywords": [
     "jquery",
@@ -32,10 +26,10 @@
       "name": "Patrick Gunderson",
       "email": "patrickgunderson@gmail.com",
       "twitter": "@gunderson"
-    } 
+    }
   ],
   "bugs": {
-    "web": "https://github.com/gunderson/jquery.spriteAnimation/issues" 
+    "web": "https://github.com/gunderson/jquery.spriteAnimation/issues"
   },
   "licenses": [
     {
@@ -45,9 +39,12 @@
   ],
   "repositories": [
     {
-      "type": "git", 
+      "type": "git",
       "url": "https://github.com/gunderson/jquery.spriteAnimation.git"
     }
   ],
-  "github": "https://github.com/gunderson/jquery.spriteAnimation"
+  "github": "https://github.com/gunderson/jquery.spriteAnimation",
+  "dependencies": {
+    "jquery": "~1.8.3"
+  }
 }
