@@ -187,7 +187,11 @@
                 settings = settings || {};
             if(!(anim = this.spriteAnimation)) {
                 if (!settings.src) {
+<<<<<<< HEAD
                     if (!(settings.src = $this.css('backgroundImage')) &&
+=======
+                    if (!(settings.src = $this.css('background-image')) ||
+>>>>>>> 7c4054cab7ac2f693feb2dcdbbb1e1266ec9786c
                         !(settings.src = $this.attr('src'))) {
                         var error = (console) ? console.error("SpriteAnimation requires image src.") : false;
                         return this;
