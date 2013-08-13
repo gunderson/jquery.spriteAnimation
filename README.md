@@ -27,7 +27,7 @@ $(".testButton").spriteAnimation({
 
 ## Documentation
 
-### Methods
+### Commands
 
 #### play
 
@@ -53,6 +53,25 @@ Stops the animation sequence  where it is.
 
 Stops the animation sequence and frame to 0.
 
+### Parametric commands
+
+Commands that require parameters should be set as parameters on objects
+
+#### gotoFrame
+
+    $(".testButton").spriteAnimation(gotoFrame:0);
+
+Sets the current frame of the animation to the integer value
+
+Special parameter `'end'` goes to the last frame of the animation. Useful for reversing.
+
+#### gotoFrameRatio
+
+    $(".testButton").spriteAnimation(gotoFrameRatio:0);
+
+Takes floats 0-1. Sets the current frame of the animation to the frame at the ratio of the total animation. Useful for tweening.
+
+
 ### Options
 
 #### src
@@ -60,7 +79,6 @@ Stops the animation sequence and frame to 0.
 Image source url. If not provided, the script tries to use the element's `background-image` or the `<img src>`.
 
     { src: "filmstrip.png" }
-
 
 #### firstFramePosition
 
@@ -104,12 +122,12 @@ Frames per second
     // Number 
     { frameRate: 25 }
 
-#### numFrames
+#### duration
 
 Number of frames in the sequence.
 
     // Number 
-    { numFrames: 10 }
+    { duration: 10 }
 
 #### loop
 
@@ -124,3 +142,58 @@ Callback on complete.
 
     // Function 
     { onComplete: null }
+
+#### command
+
+Adds a command to execute after the settings have been set
+    
+    // Takes any String command from the Commands section
+    { command: null }
+
+### Sequences
+
+Sequences can be added via the `addSequence` or `addSequences` options. If no sequences are explicitly defined, a default sequence labeled `'a'` is created transparently using the main `options` object.
+
+Sequence objects can contain the following parameters, but default to the same values as above if they are omitted:
+
+    { addSequences: {
+        'myLabel':{
+            duration:25,
+            loop:false,
+            firstFramePosition: {x:0, y:0},
+            reverse: false,
+            onComplete: null
+        }
+    }
+
+or
+
+    { addSequence: {
+        label: 'myLabel',
+        duration:25,
+        loop:false,
+        firstFramePosition: {x:0, y:0},
+        reverse: false,
+        onComplete: null
+    }
+
+Note the inclusion of a `label` in an object passed to `addSequence` is required, while the object name is used as the label in `addSequences`
+
+#### setSequence
+
+Used to change the sequence
+
+    //String
+    { setSequence: 'myLabel' }
+
+#### gotoAndPlay
+
+Shortcut method that sets a new sequence and immediately starts playing it.
+
+    { gotoAndPlay: 'myLabel' }
+
+Is the same as
+
+    { setSequence: 'myLabel',
+        command: 'play'
+    }

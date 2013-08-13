@@ -164,7 +164,6 @@
         sequences: {},
         defaultSequence: {
             label: "a",
-            first:0,
             duration:25,
             loop:false,
             firstFramePosition: {x:0, y:0},
@@ -221,6 +220,9 @@
                     });
                 }
                 if (settings.addSequence){
+                    if (!settings.addSequence.label){
+                        settings.label = 'a' + anim.sequences.length;
+                    }
                     anim.addSequence(settings.addSequence);
                 }
                 if (settings.gotoAndPlay){
@@ -246,8 +248,10 @@
                     anim.currentFrameIndex = settings.gotoFrame;
                     anim.gotoFrame(settings.gotoFrame);
                 }
-                if (settings.frameRatio) {
-                    anim.gotoFrame((settings.frameRatio * anim.options.currentSequence.duration) >> 0);
+                if (settings.gotoFrameRatio >= 0) {
+                    settings.gotoFrameRatio = Math.max(Math.min(settings.gotoFrameRatio, 1), 0);
+                    anim.currentFrameIndex = (settings.gotoFrameRatio * anim.options.currentSequence.duration) >> 0;
+                    anim.gotoFrame(anim.currentFrameIndex);
                 }
                 if (settings.command){
                     settings = settings.command;
