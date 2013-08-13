@@ -57,11 +57,11 @@ Stops the animation sequence and frame to 0.
 
 ### Parametric commands
 
-Commands that require parameters should be set as properties on objects
+Commands that require parameters should be set as properties on objects. Commands can be issued in the same object as option updates.
 
 #### gotoFrame
 
-    $(".testButton").spriteAnimation(gotoFrame:0);
+    $(".testButton").spriteAnimation({gotoFrame:0});
 
 Sets the current frame of the animation to the integer value
 
@@ -69,7 +69,7 @@ Special parameter `'end'` goes to the last frame of the animation. Useful for re
 
 #### gotoFrameRatio
 
-    $(".testButton").spriteAnimation(gotoFrameRatio:0);
+    $(".testButton").spriteAnimation({gotoFrameRatio:0});
 
 Takes floats 0-1. Sets the current frame of the animation to the frame at the ratio of the total animation. Useful for tweening.
 
