@@ -2,9 +2,9 @@
 
 ## Compositer.sh
 
-Shell script helps you use imgmagick to combine your png image sequences into a single filmstrip.
+Shell script helps you use graphicsmagick to combine your png image sequences into a single filmstrip.
 
-Depends on imgmagick. Easiest to install with homebrew on os x.
+Depends on graphicsmagick. Easiest to install with homebrew on os x.
 
     bash compositer.sh
 
