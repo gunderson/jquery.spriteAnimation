@@ -55,7 +55,7 @@ Stops the animation sequence and frame to 0.
 
 ### Parametric commands
 
-Commands that require parameters should be set as parameters on objects
+Commands that require parameters should be set as properties on objects
 
 #### gotoFrame
 
@@ -89,7 +89,7 @@ Position of the first frame in sequence. (allows you to put multiple sequences i
 
 #### orientation
 
-Position of the first frame in sequence. (allows you to put multiple sequences in one image)
+Direction to look for subsequent frames.
 
     // String, either 'x' or 'y'. 
     { orientation: "x" }
@@ -177,7 +177,7 @@ or
         onComplete: null
     }
 
-Note the inclusion of a `label` in an object passed to `addSequence` is required, while the object name is used as the label in `addSequences`
+Note the inclusion of a `label` in an object passed to `addSequence` is required, while the object key is used as the label in `addSequences`
 
 #### setSequence
 
@@ -197,3 +197,13 @@ Is the same as
     { setSequence: 'myLabel',
         command: 'play'
     }
+
+
+Events
+-----
+
+#### spriteAnimation:complete
+
+jquery.spriteAnimation fires `spriteAnimation:complete` events on the hosting jquery object whenever any sequence completes. It also fires a `spriteAnimation:complete:[sequence label]` event when labeled sequences complete.
+
+
