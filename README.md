@@ -1,5 +1,7 @@
 # jquery.spriteAnimation
 
+[![Build Status](https://travis-ci.org/gunderson/jquery.spriteAnimation.png?branch=master)](https://travis-ci.org/gunderson/jquery.spriteAnimation)
+
 Appends a new div element to object and animates through a sequence of frames in a single image.
 
 ## Getting Started
