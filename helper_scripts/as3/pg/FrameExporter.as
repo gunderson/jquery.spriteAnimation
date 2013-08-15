@@ -11,29 +11,47 @@
 	import flash.filesystem.FileMode;
 	import flash.geom.Rectangle;
 	import flash.geom.Point;
+	import flash.geom.Matrix;
     import flash.utils.getTimer;
+    import flash.events.EventDispatcher;
 	
-	public class FrameExporter {
+	public class FrameExporter extends EventDispatcher {
 		private var stage:Stage;
 		private var displayObject:IBitmapDrawable;
 		private var fileFolder:File;
 		private var fileName:String;
 		private var frameIndex:Number = 0;
-		private var frameCache:Vector.<BitmapData>;
+		private var frameCaches:Vector.<Vector.<BitmapData>>;
 		public var layout:String = 'vert';
 		public var output:String = 'spritesheet';
 		public var startTime:Number = 0;
+		private var _sizes:Array = [1];
 		
 		public static var HORIZONTAL:String = 'horiz';
 		public static var VERTICAL:String = 'vert';
 		public static var SPRITESHEET:String = 'spritesheet';
 		public static var FRAMES:String = 'frames';
+
 		
 		public function FrameExporter(stage:Stage, fileName:String = "frameExport", displayObject:IBitmapDrawable = null) {
 			this.displayObject = (displayObject !== null) ? displayObject : stage;
 			this.fileName = fileName;
 			this.stage = stage;
-			frameCache = new Vector.<BitmapData>();
+			sizes = [1];
+		}
+		
+		
+		public function set sizes(input:Array):void{
+			_sizes = input;
+			frameCaches = new Vector.<Vector.<BitmapData>>();
+			for (var i:int = 0; i < input.length; i++){
+				frameCaches.push(new Vector.<BitmapData>());
+			}
+			trace('frameCaches.length', frameCaches.length);
+		}
+		
+		public function get sizes():Array{
+			return _sizes;
 		}
 		
 		public function start():void{
@@ -45,83 +63,126 @@
 		public function stop(flush:Boolean = true):void{
 			this.stage.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
 			if (flush){
-				fileFolder = new File();
-				fileFolder.addEventListener(Event.SELECT, onFolderSelected);
-				fileFolder.browseForDirectory("Choose a directory");
+				this.flush();
 			}
+		}
+		
+		public function flush():void{
+			fileFolder = new File();
+			fileFolder.addEventListener(Event.SELECT, onFolderSelected);
+			fileFolder.browseForDirectory("Choose a directory");
 		}
 
 		private function onFolderSelected(e:Event):void{
 			fileFolder = e.target as File;
 			if (output === FrameExporter.SPRITESHEET){
-				exportSpritesheet(frameCache, layout);
+				exportSpritesheet(frameCaches, layout);
 			} else if (output === FrameExporter.FRAMES){
-				exportFrames(frameCache);
+				exportFrames(frameCaches);
 			}
 		}
 		
 		private function onEnterFrame(e:Event = null):void{
 			this.frameIndex++;
-			var bmd:BitmapData = new BitmapData(this.stage.stageWidth, this.stage.stageHeight, true, 0);
-			bmd.draw(this.displayObject);
-			frameCache.push(bmd);
+			for (var i:int = 0; i < this.sizes.length; i++){
+				frameCaches[i].push(captureFrame(_sizes[i]));
+			}
+		}
+		
+		private function captureFrame(scale:Number):BitmapData{
+			var bmd:BitmapData = new BitmapData(this.stage.stageWidth * scale, this.stage.stageHeight * scale, true, 0);
+			var matrix:Matrix = new Matrix();
+			matrix.scale(scale,scale);
+			bmd.draw(this.displayObject, matrix);
+			return bmd;
 		}
 
-		private function exportFrames(frameCache:Vector.<BitmapData>):void{
+		private function exportFrames(frameCaches:Vector.<Vector.<BitmapData>>):void{
 			startTime = getTimer();
 			var byteArray:ByteArray;
 			var file:File;
 			var stream:FileStream;
-			var totalSize = 0;
+			var totalSize:int = 0;
+			var scaleText:String = '';
+			var frameCache;
+			var i;
 			
-			for (var i=0, len=frameCache.length; i < len; i++){
-				byteArray = PNGEncoder.encode(frameCache[i]);
-				file = fileFolder.resolvePath("exports/" + this.fileName + "." + matchLength(i,frameCache.length) + ".png");
+			for (var fc = 0, len=frameCaches.length; fc < len; fc++){
+				startTime = getTimer();
+				frameCache = frameCaches[fc];
+				scaleText = _sizes[fc] + "x";
+				for (i=0, len=frameCache.length; i < len; i++){
+					byteArray = PNGEncoder.encode(frameCache[i]);
+					file = fileFolder.resolvePath("exports/" + this.fileName + scaleText + matchLength(i,frameCache.length) + ".png");
+					stream = new FileStream();
+					stream.open(file, FileMode.WRITE);
+					stream.writeBytes(byteArray);
+					stream.close();
+					totalSize += file.size;
+					trace(' -> Exporting Frame ' + i + 'of ' + frameCache.length + ' @' + _sizes[fc] + "x " + (file.size / 1024) + 'kb');   
+				}
+				trace(
+					"Export Complete \n",
+					"  - " + i + " frames\n",
+					"  - total size " + (totalSize / 1024) + "kb\n",
+					"  - in " + ((getTimer() - startTime)/1000) + " seconds"
+				);
+			}
+			
+			this.dispatchEvent(new Event(Event.COMPLETE));
+		}
+
+		private function exportSpritesheet(frameCaches:Vector.<Vector.<BitmapData>>, layout:String = 'horiz'):void{
+			startTime = getTimer();
+			var frameWidth:Number;
+			var frameHeight:Number;
+			var dx:Number;
+			var dy:Number;
+			var scaleText:String = '';
+			var frameCache;
+			var bmd:BitmapData;
+			var	sourceRect:Rectangle;
+			var destPoint:Point;
+			var byteArray:ByteArray;
+			var file:File;
+			var stream:FileStream;
+			var i,len;
+			
+			for (var fc = 0, lenfc=frameCaches.length; fc < lenfc; fc++){
+				startTime = getTimer();
+				frameCache = frameCaches[fc];
+				scaleText = _sizes[fc] + "x";
+				
+				frameWidth = frameCache[0].width;
+				frameHeight = frameCache[0].height;
+			
+				dx = (layout == FrameExporter.HORIZONTAL) ? frameWidth : 0;
+				dy = (layout == FrameExporter.HORIZONTAL) ? 0 : frameHeight;
+			
+				bmd = new BitmapData(frameWidth + (dx * (frameCache.length - 1)), frameHeight  + (dy * (frameCache.length - 1)), true, 0);
+				sourceRect = new Rectangle(0,0,frameWidth, frameHeight);
+				
+				destPoint = new Point();
+				
+				for (i=0, len=frameCache.length; i < len; i++){
+					destPoint.x = dx * i;
+					destPoint.y = dy * i;
+					bmd.copyPixels(frameCache[i], sourceRect, destPoint);
+				}
+				byteArray = PNGEncoder.encode(bmd);
+				file = fileFolder.resolvePath("exports/" + this.fileName + "_spritesheet_" + frameCache.length + "f" + scaleText + layout + ".png");
 				stream = new FileStream();
 				stream.open(file, FileMode.WRITE);
 				stream.writeBytes(byteArray);
 				stream.close();
-				totalSize += file.size;
-				trace(' -> Exporting Frame ' + i + ' - ' + (file.size / 1024) + 'kb');   
+				trace(
+					"Export "+ scaleText +" Complete \n",
+					"  - " + i + " frames\n",
+					"  - " + (file.size / 1024) + 'kb\n',
+					"  - in " + ((getTimer() - startTime)/1000) + " seconds"
+				);
 			}
-			trace(
-				"Export Complete \n",
-				"  - " + i + " frames\n",
-				"  - total size " + (totalSize / 1024) + "kb\n",
-				"  - in " + ((getTimer() - startTime)/1000) + " seconds"
-			);
-		}
-
-		private function exportSpritesheet(frameCache:Vector.<BitmapData>, layout:String = 'vert'):void{
-			startTime = getTimer();
-			var frameWidth:Number = frameCache[0].width;
-			var frameHeight:Number = frameCache[0].width;
-			
-			var dx:Number = (layout == FrameExporter.HORIZONTAL) ? frameWidth : 0;
-			var dy:Number = (layout == FrameExporter.HORIZONTAL) ? 0 : frameHeight;
-			
-			var bmd:BitmapData = new BitmapData(frameWidth + (dx * (frameCache.length - 1)), frameHeight  + (dy * (frameCache.length - 1)), true, 0);
-			var	sourceRect:Rectangle = new Rectangle(0,0,frameWidth, frameHeight);
-			
-			var destPoint:Point = new Point();
-			
-			for (var i=0, len=frameCache.length; i < len; i++){
-				destPoint.x = dx * i;
-				destPoint.y = dy * i;
-				bmd.copyPixels(frameCache[i], sourceRect, destPoint);
-			}
-			var byteArray:ByteArray = PNGEncoder.encode(bmd);
-			var file:File = fileFolder.resolvePath("exports/" + this.fileName + "_spritesheet_x" + frameCache.length + "_" + layout + ".png");
-			var stream:FileStream = new FileStream();
-			stream.open(file, FileMode.WRITE);
-			stream.writeBytes(byteArray);
-			stream.close();
-			trace(
-				"Export Complete \n",
-				"  - " + i + " frames\n",
-				"  - " + (file.size / 1024) + 'kb\n',
-				"  - in " + ((getTimer() - startTime)/1000) + " seconds"
-			);
+			this.dispatchEvent(new Event(Event.COMPLETE));
 		}
 		
 		private function matchLength(n0:Number, n1:Number):String{
