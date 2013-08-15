@@ -110,7 +110,7 @@
 			for (var fc = 0, len=frameCaches.length; fc < len; fc++){
 				startTime = getTimer();
 				frameCache = frameCaches[fc];
-				scaleText = _sizes[fc] + "x";
+				scaleText = "_"_sizes[fc] + "x_";
 				for (i=0, len=frameCache.length; i < len; i++){
 					byteArray = PNGEncoder.encode(frameCache[i]);
 					file = fileFolder.resolvePath("exports/" + this.fileName + scaleText + matchLength(i,frameCache.length) + ".png");
@@ -119,7 +119,7 @@
 					stream.writeBytes(byteArray);
 					stream.close();
 					totalSize += file.size;
-					trace(' -> Exporting Frame ' + i + 'of ' + frameCache.length + ' @' + _sizes[fc] + "x " + (file.size / 1024) + 'kb');   
+					trace(' -> Exporting Frame ' + i + 'of ' + frameCache.length + ' @' + _sizes[fc] + " " + (file.size / 1024) + 'kb');   
 				}
 				trace(
 					"Export Complete \n",
@@ -151,7 +151,7 @@
 			for (var fc = 0, lenfc=frameCaches.length; fc < lenfc; fc++){
 				startTime = getTimer();
 				frameCache = frameCaches[fc];
-				scaleText = _sizes[fc] + "x";
+				scaleText = _sizes[fc] + "x_";
 				
 				frameWidth = frameCache[0].width;
 				frameHeight = frameCache[0].height;
@@ -170,7 +170,7 @@
 					bmd.copyPixels(frameCache[i], sourceRect, destPoint);
 				}
 				byteArray = PNGEncoder.encode(bmd);
-				file = fileFolder.resolvePath("exports/" + this.fileName + "_spritesheet_" + frameCache.length + "f" + scaleText + layout + ".png");
+				file = fileFolder.resolvePath("exports/" + this.fileName + "_spritesheet_" + scaleText + frameCache.length + "f_" + layout + ".png");
 				stream = new FileStream();
 				stream.open(file, FileMode.WRITE);
 				stream.writeBytes(byteArray);
