@@ -105,25 +105,27 @@
 			var totalSize:int = 0;
 			var scaleText:String = '';
 			var frameCache;
-			var i;
+			var i,len;
 			
-			for (var fc = 0, len=frameCaches.length; fc < len; fc++){
+			for (var fc = 0, fclen=frameCaches.length; fc < fclen; fc++){
 				startTime = getTimer();
 				frameCache = frameCaches[fc];
-				scaleText = "_"_sizes[fc] + "x_";
+				scaleText = frameCache[0].width;
 				for (i=0, len=frameCache.length; i < len; i++){
 					byteArray = PNGEncoder.encode(frameCache[i]);
-					file = fileFolder.resolvePath("exports/" + this.fileName + scaleText + matchLength(i,frameCache.length) + ".png");
+					file = fileFolder.resolvePath("exports/"+ scaleText + "/" + this.fileName + "_"  + matchLength(i,frameCache.length) + ".png");
 					stream = new FileStream();
 					stream.open(file, FileMode.WRITE);
 					stream.writeBytes(byteArray);
 					stream.close();
 					totalSize += file.size;
-					trace(' -> Exporting Frame ' + i + 'of ' + frameCache.length + ' @' + _sizes[fc] + " " + (file.size / 1024) + 'kb');   
+					trace(' -> Exporting Frame ' + i + ' of ' + frameCache.length + ' @' + scaleText + " " + (file.size / 1024) + 'kb');   
 				}
 				trace(
 					"Export Complete \n",
 					"  - " + i + " frames\n",
+					"  - " + _sizes[fc] + "x\n",
+					"  - " + frameCache[0].width + "x"+ frameCache[0].height +" \n",
 					"  - total size " + (totalSize / 1024) + "kb\n",
 					"  - in " + ((getTimer() - startTime)/1000) + " seconds"
 				);
@@ -151,7 +153,7 @@
 			for (var fc = 0, lenfc=frameCaches.length; fc < lenfc; fc++){
 				startTime = getTimer();
 				frameCache = frameCaches[fc];
-				scaleText = _sizes[fc] + "x_";
+				scaleText = frameCache[0].width;
 				
 				frameWidth = frameCache[0].width;
 				frameHeight = frameCache[0].height;
@@ -170,7 +172,7 @@
 					bmd.copyPixels(frameCache[i], sourceRect, destPoint);
 				}
 				byteArray = PNGEncoder.encode(bmd);
-				file = fileFolder.resolvePath("exports/" + this.fileName + "_spritesheet_" + scaleText + frameCache.length + "f_" + layout + ".png");
+				file = fileFolder.resolvePath("exports/" + this.fileName + "_spritesheet_" + scaleText + "_" + frameCache.length + "f_" + layout + ".png");
 				stream = new FileStream();
 				stream.open(file, FileMode.WRITE);
 				stream.writeBytes(byteArray);
@@ -178,6 +180,8 @@
 				trace(
 					"Export "+ scaleText +" Complete \n",
 					"  - " + i + " frames\n",
+					"  - " + _sizes[fc] + "x\n",
+					"  - " + frameCache[0].width + "x"+ frameCache[0].height +" \n",
 					"  - " + (file.size / 1024) + 'kb\n',
 					"  - in " + ((getTimer() - startTime)/1000) + " seconds"
 				);
