@@ -98,14 +98,14 @@ Direction to look for subsequent frames.
 
 #### frameWidth
 
-Width of the frame in px
+Width of the frame in px. Defaults to the css width of the element.
 
     // Number 
     { frameWidth: 25 }
 
 #### frameHeight
 
-Height of the frame in px
+Height of the frame in px. Defaults to the css width of the element.
 
     // Number 
     { frameHeight: 25 }
@@ -124,12 +124,12 @@ Frames per second
     // Number 
     { frameRate: 25 }
 
-#### duration
+#### length
 
 Number of frames in the sequence.
 
     // Number 
-    { duration: 10 }
+    { length: 10 }
 
 #### loop
 
