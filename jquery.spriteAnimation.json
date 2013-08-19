@@ -2,7 +2,7 @@
   "name": "jquery.spriteAnimation",
   "title": "jquery.spriteAnimation",
   "description": "Takes a filmstrip and animates through the frames.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "homepage": "https://github.com/gunderson/jquery.spriteAnimation",
   "author": {
     "name": "Patrick Gunderson",

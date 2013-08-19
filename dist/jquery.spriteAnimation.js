@@ -1,4 +1,4 @@
-/*! jquery.spriteAnimation - v0.2.0 - 2013-08-19
+/*! jquery.spriteAnimation - v0.2.1 - 2013-08-19
 * https://github.com/gunderson/jquery.spriteAnimation
 * Copyright (c) 2013 Patrick Gunderson; Licensed MIT */
 (function($) {
