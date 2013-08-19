@@ -1,4 +1,4 @@
-/*! jquery.spriteAnimation - v0.2.0 - 2013-08-13
+/*! jquery.spriteAnimation - v0.2.0 - 2013-08-19
 * https://github.com/gunderson/jquery.spriteAnimation
 * Copyright (c) 2013 Patrick Gunderson; Licensed MIT */
 (function($) {
@@ -26,13 +26,11 @@
 
         base.generate = function(){
             base.$anim = $("<div/>").addClass('spriteAnimation');
-            var width = base.options.frameWidth || base.$el.width(),
-                height = base.options.frameHeight || base.$el.height();
             base.$anim.css({
               backgroundImage: 'url(' + base.options.src + ')',
               backgroundPosition: base.options.currentSequence.firstFramePosition.x + "px " + base.options.currentSequence.firstFramePosition.y + "px",
-              width: width,
-              height: height,
+              width: base.options.frameWidth,
+              height: base.options.frameHeight,
               overflow: "hidden"
           });
             base.$el.append(base.$anim);
@@ -94,7 +92,7 @@
         };
 
         base.nextFrame = function(){
-            if (++base.currentFrameIndex < base.options.currentSequence.duration){
+            if (++base.currentFrameIndex < base.options.currentSequence.length){
                 return base.gotoFrame(base.currentFrameIndex);
             } else {
                 if (base.options.currentSequence.loop){
@@ -114,7 +112,7 @@
                 return base.gotoFrame(base.currentFrameIndex);
             } else {
                 if (base.options.currentSequence.loop){
-                    base.currentFrameIndex = base.options.currentSequence.duration;
+                    base.currentFrameIndex = base.options.currentSequence.length;
                     base.$el.trigger('spriteAnimation:loop');
                     base.$el.trigger('spriteAnimation:loop-to-end');
                     return base.gotoFrame(base.currentFrameIndex);
@@ -164,7 +162,7 @@
         sequences: {},
         defaultSequence: {
             label: "a",
-            duration:25,
+            length:25, // in frames
             loop:false,
             firstFramePosition: {x:0, y:0},
             reverse: false,
@@ -174,7 +172,7 @@
         frameWidth: 25,
         frameHeight: 25,
         frameSpacing: 0,
-        frameRate: 25, // fps,
+        frameRate: 60, // fps,
         gotoAndPlay: "a"
     };
 
@@ -186,6 +184,7 @@
                 anim;
                 settings = settings || {};
             if(!(anim = this.spriteAnimation)) {
+                //grab the sprite image from css if it isn't defined
                 if (!settings.src) {
                     if (!(settings.src = $this.css('backgroundImage')) &&
                         !(settings.src = $this.attr('src'))) {
@@ -198,6 +197,14 @@
                     if (settings.src.substr(0,4) === "url("){
                         settings.src = settings.src.replace('url(','').replace(')','');
                     }
+                }
+
+                if (!settings.frameWidth){
+                    settings.frameWidth = $this.width();
+                }
+
+                if (!settings.frameHeight){
+                    settings.frameHeight = $this.height();
                 }
 
                 this.spriteAnimation = anim = new $.spriteAnimation(this, options);
@@ -242,7 +249,7 @@
                 }
                 if (settings.gotoFrame >= 0 || settings.gotoFrame) {
                     if (settings.gotoFrame === 'end'){
-                        settings.gotoFrame = anim.options.currentSequence.duration - 1;
+                        settings.gotoFrame = anim.options.currentSequence.length - 1;
                     }
                     anim.stop();
                     anim.currentFrameIndex = settings.gotoFrame;
@@ -250,7 +257,7 @@
                 }
                 if (settings.gotoFrameRatio >= 0) {
                     settings.gotoFrameRatio = Math.max(Math.min(settings.gotoFrameRatio, 1), 0);
-                    anim.currentFrameIndex = (settings.gotoFrameRatio * anim.options.currentSequence.duration) >> 0;
+                    anim.currentFrameIndex = (settings.gotoFrameRatio * anim.options.currentSequence.length) >> 0;
                     anim.gotoFrame(anim.currentFrameIndex);
                 }
                 if (settings.command){
