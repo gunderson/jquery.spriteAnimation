@@ -22,7 +22,7 @@ $(".testButton").spriteAnimation({
     frameHeight: 24,
     frameSpacing: 1,
     frameRate: 60,
-    numFrames: 11
+    length: 11
   })
 </script>
 ```
@@ -122,14 +122,14 @@ Spacing between frames in px
 Frames per second
 
     // Number 
-    { frameRate: 25 }
+    { frameRate: 60 }
 
-#### length
+#### length (required)
 
 Number of frames in the sequence.
 
     // Number 
-    { length: 10 }
+    { length: 25 }
 
 #### loop
 
