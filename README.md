@@ -214,3 +214,7 @@ Changes
 ####v0.2.1
 
 1. Changed the `duration` property to `length`
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/gunderson/jquery.spriteanimation/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
