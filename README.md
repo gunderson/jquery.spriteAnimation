@@ -208,4 +208,9 @@ Events
 
 jquery.spriteAnimation fires `spriteAnimation:complete` events on the hosting jquery object whenever any sequence completes. It also fires a `spriteAnimation:complete:[sequence label]` event when labeled sequences complete.
 
+Changes
+-----
 
+####v0.2.1
+
+1. Changed the `duration` property to `length`
