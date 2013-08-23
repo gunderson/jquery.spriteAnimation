@@ -161,7 +161,7 @@ Sequence objects can contain the following parameters, but default to the same v
     { addSequences: {
         'myLabel':{
             duration:25,
-            loop:false,
+            length:false,
             firstFramePosition: {x:0, y:0},
             reverse: false,
             onComplete: null
@@ -172,7 +172,7 @@ or
 
     { addSequence: {
         label: 'myLabel',
-        duration:25,
+        length:25,
         loop:false,
         firstFramePosition: {x:0, y:0},
         reverse: false,
