@@ -1,4 +1,4 @@
-/*! jquery.spriteAnimation - v0.2.1 - 2013-08-19
+/*! jquery.spriteAnimation - v0.2.2 - 2013-08-29
 * https://github.com/gunderson/jquery.spriteAnimation
 * Copyright (c) 2013 Patrick Gunderson; Licensed MIT */
 (function($) {
@@ -221,10 +221,13 @@
             if(settings && typeof settings === "object") {
                 $.extend(anim.options, settings);
                 if (settings.addSequences){
+                    var first;
                     $.each(settings.addSequences, function(i, obj){
+                        if (!first) first = i;
                         this.label = i;
                         anim.addSequence(this);
                     });
+                    settings.setSequence = first;
                 }
                 if (settings.addSequence){
                     if (!settings.addSequence.label){
