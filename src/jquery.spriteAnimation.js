@@ -25,6 +25,7 @@
         base.init = function(){
             base.el = el;
             base.options = $.extend({},$.spriteAnimation.options, options);
+            base.options.sequences = {};
             base.$el = $(this.el);
             base.setFrameRate(base.options.frameRate);
         };
