@@ -1,0 +1,14 @@
+{
+  "name": "jquery.spriteAnimation",
+  "version": "0.2.3",
+  "main": "src/jquery.spriteAnimation.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "bower_components",
+    "test",
+    "tests",
+    "jam"
+  ]
+}

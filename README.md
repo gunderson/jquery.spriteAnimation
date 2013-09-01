@@ -1,18 +1,20 @@
-# jQuery.SpriteAnimation
+# jquery.spriteAnimation
+
+[![Build Status](https://travis-ci.org/gunderson/jquery.spriteAnimation.png?branch=master)](https://travis-ci.org/gunderson/jquery.spriteAnimation)
 
 Appends a new div element to object and animates through a sequence of frames in a single image.
 
 ## Getting Started
 Download the [production version][min] or the [development version][max].
 
-[min]: https://raw.github.com/patrickgunderson/jQuery.spriteAnimation/master/dist/jQuery.spriteAnimation.min.js
-[max]: https://raw.github.com/patrickgunderson/jQuery.spriteAnimation/master/dist/jQuery.spriteAnimation.js
+[min]: https://raw.github.com/gunderson/jquery.spriteAnimation/master/dist/jquery.spriteAnimation.min.js
+[max]: https://raw.github.com/gunderson/jquery.spriteAnimation/master/dist/jquery.spriteAnimation.js
 
 In your web page:
 
 ```html
 <script src="jquery.js"></script>
-<script src="dist/jQuery.spriteAnimation.min.js"></script>
+<script src="dist/jquery.spriteAnimation.min.js"></script>
 <script>
 $(".testButton").spriteAnimation({
     src: "filmstrip.png",
@@ -20,14 +22,14 @@ $(".testButton").spriteAnimation({
     frameHeight: 24,
     frameSpacing: 1,
     frameRate: 60,
-    numFrames: 11
+    length: 11
   })
 </script>
 ```
 
 ## Documentation
 
-### Methods
+### Commands
 
 #### play
 
@@ -53,14 +55,32 @@ Stops the animation sequence  where it is.
 
 Stops the animation sequence and frame to 0.
 
+### Parametric commands
+
+Commands that require parameters should be set as properties on objects. Commands can be issued in the same object as option updates.
+
+#### gotoFrame
+
+    $(".testButton").spriteAnimation({gotoFrame:0});
+
+Sets the current frame of the animation to the integer value
+
+Special parameter `'end'` goes to the last frame of the animation. Useful for reversing.
+
+#### gotoFrameRatio
+
+    $(".testButton").spriteAnimation({gotoFrameRatio:0});
+
+Takes floats 0-1. Sets the current frame of the animation to the frame at the ratio of the total animation. Useful for tweening.
+
+
 ### Options
 
-#### src - Required
+#### src
 
-Image source url.
+Image source url. If not provided, the script tries to use the element's `background-image` or the `<img src>`.
 
     { src: "filmstrip.png" }
-
 
 #### firstFramePosition
 
@@ -71,21 +91,21 @@ Position of the first frame in sequence. (allows you to put multiple sequences i
 
 #### orientation
 
-Position of the first frame in sequence. (allows you to put multiple sequences in one image)
+Direction to look for subsequent frames.
 
     // String, either 'x' or 'y'. 
     { orientation: "x" }
 
 #### frameWidth
 
-Width of the frame in px
+Width of the frame in px. Defaults to the css width of the element.
 
     // Number 
     { frameWidth: 25 }
 
 #### frameHeight
 
-Height of the frame in px
+Height of the frame in px. Defaults to the css width of the element.
 
     // Number 
     { frameHeight: 25 }
@@ -102,14 +122,14 @@ Spacing between frames in px
 Frames per second
 
     // Number 
-    { frameRate: 25 }
+    { frameRate: 60 }
 
-#### numFrames
+#### length (required)
 
 Number of frames in the sequence.
 
     // Number 
-    { numFrames: 10 }
+    { length: 25 }
 
 #### loop
 
@@ -124,3 +144,77 @@ Callback on complete.
 
     // Function 
     { onComplete: null }
+
+#### command
+
+Adds a command to execute after the settings have been set
+    
+    // Takes any String command from the Commands section
+    { command: null }
+
+### Sequences
+
+Sequences can be added via the `addSequence` or `addSequences` options. If no sequences are explicitly defined, a default sequence labeled `'a'` is created transparently using the main `options` object.
+
+Sequence objects can contain the following parameters, but default to the same values as above if they are omitted:
+
+    { addSequences: {
+        'myLabel':{
+            duration:25,
+            length:false,
+            firstFramePosition: {x:0, y:0},
+            reverse: false,
+            onComplete: null
+        }
+    }
+
+or
+
+    { addSequence: {
+        label: 'myLabel',
+        length:25,
+        loop:false,
+        firstFramePosition: {x:0, y:0},
+        reverse: false,
+        onComplete: null
+    }
+
+Note the inclusion of a `label` in an object passed to `addSequence` is required, while the object key is used as the label in `addSequences`
+
+#### setSequence
+
+Used to change the sequence
+
+    //String
+    { setSequence: 'myLabel' }
+
+#### gotoAndPlay
+
+Shortcut method that sets a new sequence and immediately starts playing it.
+
+    { gotoAndPlay: 'myLabel' }
+
+Is the same as
+
+    { setSequence: 'myLabel',
+        command: 'play'
+    }
+
+
+Events
+-----
+
+#### spriteAnimation:complete
+
+jquery.spriteAnimation fires `spriteAnimation:complete` events on the hosting jquery object whenever any sequence completes. It also fires a `spriteAnimation:complete:[sequence label]` event when labeled sequences complete.
+
+Changes
+-----
+
+####v0.2.1
+
+1. Changed the `duration` property to `length`
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/gunderson/jquery.spriteanimation/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
