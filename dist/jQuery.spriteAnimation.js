@@ -1,4 +1,4 @@
-/*! jQuery.SpriteAnimation - v0.1.0 - 2013-05-31
+/*! jQuery.SpriteAnimation - v0.1.0 - 2013-08-31
 * https://github.com/patrickgunderson/jQuery.spriteAnimation
 * Copyright (c) 2013 Patrick Gunderson; Licensed MIT */
 
@@ -32,7 +32,7 @@
               backgroundImage: 'url(' + base.options.src + ')',
               backgroundPosition: base.options.firstFramePosition.x + "px " + base.options.firstFramePosition.y + "px",
               width: (base.options.frameWidth) + "px",
-              height: (base.options.frameHeight) + "px",
+              height: (Math.abs(base.options.frameHeight)) + "px",
               overflow: "hidden"
           });
             base.$el.append(base.$anim);
@@ -181,7 +181,6 @@
 
                 options = $.extend({}, $.spriteAnimation.options, settings);
                 this.spriteAnimation = anim = new $.spriteAnimation(this, options);
-                var message = (console) ? console.log("new SpriteAnimation, " + settings.src): true;
             }
             if(settings && typeof settings === "object") {
                 $.extend(anim.options, settings);
